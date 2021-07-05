@@ -1,0 +1,205 @@
+DataGran Interview project Documentation
+
+Two page project the first page requires using React-Highcharts and the second will make use of an api to fetch data from an endpoint
+
+firstly i began with the React setup,i installed a React application with the command npx create-react-app
+
+Then i began installation of libraries i would use for the project
+The first one beight React Highcharts and the second React-router-dom which will basically be used to switch pages
+also i made use of another react library 'react-data-table-component',basically what it does is collect all the information from the csv file 
+
+now i start iomplementing the pages
+i started of with the React highchart page
+
+the next step was making an upload button that would fetch the csv file 
+
+i attached an onChange event to it that would watch when a file has been uploaded
+
+when this onchange has been fired a function is called ,basically the function goes through the csv file and makes sure its a valid csv file
+
+after the checking i split the csv to get the headers and the data in a table
+i created two states in react one which holds the header of the csv file and another that holds the data
+
+now is the time i made use of react-data-table
+it accepted four props but two main ones 
+
+           "<DataTable style={{display:'none'}}
+             pagination
+             highlightOnHover
+             columns={columns}
+             data={data}
+           />"
+ i passed columns and data to the datatable which are both states i have created
+
+ data holds all information about the csv and will be thrown into the datatable body and columns will be thrown to the header
+
+ now i have basically collected all informations i needed
+
+ now its time to build the Highcharts
+
+ the highchart needed a category prop which represent the x-axis and a data property in the series object which represent the y-axis
+
+ also i needed a way to fill up the dropdown so i developed an algorithm that watches when the csv file has being uploaded then i mapped through the data which it returns and passed them down as the value for each dropdown menus
+
+ now its time to render the chart
+
+ the csv file returned a data list that contains  an array of objects so i mapped through this list to get values depending on the values of the dropdown
+
+
+    "
+    const buttonClick =()=>{
+          request = first.current.value;
+          request2 = second.current.value;
+          setName1(request)
+          arr =[];
+          arr2 =[];
+          data && data.map(item =>arr .push(item[request]))
+          data && data.map(item2 =>arr2 .push(Number(item2[request2])))
+          setXaxis(arr)
+          setYaxis(arr2)
+          //console.log(yaxis)
+        }
+    "
+
+
+now there is a state that holds values of the dropdowns
+
+now the Xazis and Yaxis holds the value of both dropdowns
+
+options is an object which the highchart accepts
+ so i pass in the x-axis to the categries list and y-axis to the data property of the series object
+
+   "
+      let options =
+          {
+            chart:{
+              type:'line'
+            },
+            title: {
+              text: 'My chart'
+            },
+            xAxis:{
+              categories:x-axis
+            },
+            series:{
+              color:'red',
+              data:yaxis
+            }
+          }
+        "
+now when the process button is clicked it processes those information an displays those informations as inputed in the dropdown
+
+Now of to the second page
+
+A main table was created  which will hold information about all users post
+
+when the page components mount "useEffect" i used a fetch to get to the api andpoint and got all the post 
+
+the i paste them into a state
+
+            "
+             useEffect(()=>{
+              fetch("https://jsonplaceholder.typicode.com/posts")
+              .then(response => response.json())
+              .then(res => setRes(res))
+          
+             },[])
+           "
+
+after that the i mapped through this data sent from the api and fixed them all into the table
+
+    "
+    function TD(){
+        return(
+            res && res.map(item =>{
+                return (
+                    <tr key={item.id}>
+                        <td style={{cursor:'pointer'}} onClick={()=>Showpost(item.userId)}>{item.userId}</td>
+                        <td style={{cursor:'pointer'}}  onClick={()=>Showcomment(item.id)}>{item.id}</td>
+                        <td style={{cursor:'pointer'}}>{item.title}</td>
+                        <td style={{cursor:'pointer'}}>{item.body}</td>
+                    </tr>
+                )
+            })
+        )
+    }
+    "
+it basically is a function that returns the mapped data
+
+then i implemented an onclick on the first td wich holds the userId and also an onClick to the second td which holds the user postId
+
+when the userid is clicked on,a function is called which holds the user id of that clicked table data,
+
+then i make another fetch request which makes a post request 
+   
+
+       "
+            function Showpost(id){
+                let arr =[];
+                fetch(`https://jsonplaceholder.typicode.com/posts/`)
+                .then(response => response.json())
+                .then((res) => {
+                    arr = res.filter(ind => ind.userId == id )
+                setTab1(arr)
+                    
+                })
+                
+
+             }
+       "
+
+    then i baiscally filtered through all those post and returned the one that matches the id that was clicked
+
+    then i pushed them all to a state and in the component i read them all to another table that shows specific user post
+
+
+now to the second function which runs onclick of a user post id
+
+i made a request to the comments api
+
+        "
+            function Showcomment(id){
+                    let arr2 =[];
+                    fetch(`https://jsonplaceholder.typicode.com/comments/`)
+                    .then(response1 => response1.json())
+                    .then((res1) => {
+                        arr2= res1.filter(individual => individual.postId == id )
+                        setComment(arr2);
+                        
+                        
+                    })
+           
+             }
+         "
+
+then i filtered through the request and returned those comments that matches the id of the clicked post id
+
+then i pushed them all to the comments state
+
+then i map through the state and render all the data to a table that shows the comment
+
+             "
+                    {
+                          comment && comment.map(com =>{
+                              return(
+                                  <tr>
+                                      <td>{com.postId}</td>
+                                      <td>{com.id}</td>
+                                      <td>{com.body}</td>
+                                      <td>{com.email}</td>
+                                      <td>{com.name}</td>
+                                  </tr>
+                              )
+                          })
+                      }                
+             "
+
+thats all for the table page
+
+for easy routing between both pages i made use of React router to switch pages without page reload 
+
+which is implemented by a button at the top of both pages
+
+
+
+Documented By  --> Hillary victor
